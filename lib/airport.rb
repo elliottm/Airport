@@ -11,12 +11,11 @@ def plane_count
 end
 
 def dock plane
-  raise "Airport is full mate" if full?
+  raise "Airport is full mate" if full? 
   @planes << plane
 end
 
 def release_plane
-  # raise "The weather is not nice you idiot, do one" if operational?(weather)
   @planes.pop
 end
 

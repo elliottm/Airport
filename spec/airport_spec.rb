@@ -4,7 +4,7 @@ describe Airport do
 
 let(:airport) { Airport.new }
 let(:plane) { double :plane }
-let(:weather) {double :weather, sunny?: true}
+let(:weather) {double :weather, :random_weather_generator => true}
 
   it 'can accept a plane' do
     expect(airport.plane_count).to eq 0
@@ -20,7 +20,6 @@ let(:weather) {double :weather, sunny?: true}
   end
 
   it 'knows when the aiport is full' do
-    expect(airport).not_to be_full
     10.times { airport.dock(plane) }
     expect(airport).to be_full
   end
@@ -41,7 +40,7 @@ let(:weather) {double :weather, sunny?: true}
   end
 
   it 'knows that it is sunny' do
-    expect(weather).to receive(:sunny?).and_return true
+    expect(weather).to receive(:random_weather_generator).and_return true
     airport.operational?(weather)
   end
 
@@ -51,25 +50,20 @@ let(:weather) {double :weather, sunny?: true}
   end
 
   it 'knows that it is not sunny' do
-    weather = double :weather, {:sunny? => false}
-    expect(weather).to receive(:sunny?).and_return false
+    weather = double :weather, {:random_weather_generator => false}
+    expect(weather).to receive(:random_weather_generator).and_return false
     airport.operational?(weather)
   end
 
    it 'knows that it is not operational' do
-    weather = double :weather, {:sunny? => false}
+    weather = double :weather, {:random_weather_generator => false}
     airport.operational?(weather)
     expect(airport).not_to be_operational(weather)
   end
 
-  # it 'does not all take off if not operational' do
-  #   weather = double :weather, {:sunny? => false}
-  #   airport.dock(plane)
-  #   # expect(lambda { airport.release_plane}).to raise_error(RuntimeError)
-  #   airport.release_plane
-  #   expect(airport.plane_count).to eq 1
-  # end
-
-
+  it 'does not allow landing if not operational' do
+    airport.not_operational
+    expect(lambda { airport.dock(plane)}).to raise_error(RuntimeError)
+  end
 
 end
